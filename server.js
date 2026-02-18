@@ -80,8 +80,12 @@ wss.on("connection", (ws) => {
         const cols = msg.cols || 120;
         const rows = msg.rows || 30;
 
-        const shell = CLAUDE_CMD;
-        const args = [];
+        // Use shell wrapper to execute claude
+        const shell = process.env.SHELL || "/bin/zsh";
+        const args = ["-l", "-c", `exec ${CLAUDE_CMD}`];
+
+        console.log(`Attempting to spawn: ${shell} ${args.join(" ")}`);
+        console.log(`Working directory: ${cwd}`);
 
         // Build an environment with a PATH that includes the directory
         // where claude lives, so child processes resolve correctly too.
@@ -105,6 +109,9 @@ wss.on("connection", (ws) => {
             },
           });
         } catch (err) {
+          console.error(`Spawn error:`, err);
+          console.error(`Shell: ${shell}`);
+          console.error(`CWD: ${cwd}`);
           ws.send(
             JSON.stringify({
               type: "error",
