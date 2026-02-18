@@ -1,0 +1,22 @@
+[Unit]
+Description=Claude Code Web — tabbed terminal interface for Claude Code
+After=network.target
+
+[Service]
+Type=simple
+# Change User/Group to match your system user
+User=YOUR_USER
+Group=YOUR_USER
+WorkingDirectory=/opt/claude-code-web
+ExecStart=/usr/bin/node /opt/claude-code-web/server.js
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=3000
+# Adjust if claude is installed elsewhere
+# Environment=CLAUDE_CMD=/usr/local/bin/claude
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
